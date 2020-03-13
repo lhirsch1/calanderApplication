@@ -1,22 +1,30 @@
 $(document).ready(function() {
   
-  var x = document.getElementById("demo");
+  //declaring variables for longitude and latitude
   var lat;
   var lon;
+
+  //this functions uses the navigator object to get the users coordinates
   function getLocation() {
+    //if statement accounts for browsers without geolocation
+    //if geoloation is allowed call gettemp function
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(showPosition);
+      navigator.geolocation.getCurrentPosition(getTemp);
     } else { 
       alert("Geolocation is not supported by this browser.");
     }
   }
-  
-  function showPosition(position) {
+  //this function takes the user's lat and long with position from navigator
+  function getTemp(position) {
+    //setting lat and long
     lat = position.coords.latitude;  
     lon = position.coords.longitude;
 
-    
+    //calling openweathermap api
+
+    //constructing api url 
     var queryURL ="https://api.openweathermap.org/data/2.5/weather?lat=" + lat +"&lon=" + lon + "&appid=fd2e981e85be0b6a6bbd5c82af3e6632"  
+    //ajax call gets data from queryURL
     $.ajax({
       url: queryURL,
       method: "GET"
@@ -24,26 +32,24 @@ $(document).ready(function() {
     
     //gets temp from openweather api and does calculation to convert from kelvin to fahrenheit 
     var temp = Math.round((parseInt(response.main.temp) - 273.15) * (9/5) + 32);
+    //selecting paragraph from DOM
     var tempPara = $('.weather');
+    //appending text and temp to page
     tempPara.text("Current Temperature : " + temp + " Degrees")
     console.log("Current Temperature : " + temp + " Degrees");
-
-
-
     
   })
   
     
   }
+  //calls get location 
   getLocation();
-  // listen for save button clicks
 
+
+
+  // listen for save button clicks
   $(".saveBtn").on("click", function() {
 
-
-   
-    
-    // get nearby values
     //the sibling function with the class selector is used to select the child elements of the same parent who 
     //share the class name. 
     //the "value" variable is being assigned the value of the selected element's sibling with the description class identifier  
@@ -102,7 +108,7 @@ $(document).ready(function() {
   //hourUpdater is called every 15 seconds to stay 
   var interval = setInterval(hourUpdater, 15000);
 
-  // This checks local storage for any saved events and then updates the calendar
+  // This checks local storage for any saved events per hour and then updates the calendar
   $("#hour-9 .description").val(localStorage.getItem("hour-9"));
   $("#hour-10 .description").val(localStorage.getItem("hour-10"));
   $("#hour-11 .description").val(localStorage.getItem("hour-11"));
